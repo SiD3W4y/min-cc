@@ -1,0 +1,1 @@
+print("Min-VM compiler")
