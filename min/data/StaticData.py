@@ -2,7 +2,7 @@
 import struct
 
 DATA_STR = 0
-DATA_NUMBER = 1
+DATA_NUM = 1
 
 class StaticData:
 
@@ -17,7 +17,7 @@ class StaticData:
         return self.content
 
     def getPacked(self):
-        if self.dtype = DATA_STR:
-            return self.content
-        if self.dtype == DATA_NUMBER:
+        if self.dtype == DATA_STR:
+            return bytes(self.content,"UTF-8")
+        if self.dtype == DATA_NUM:
             return struct.pack("I",self.content)
