@@ -21,9 +21,9 @@ User definable stack size
 ## Bytecode executable format (.mx)
 
 - 2b magic "MX"
-- 4b data section offset
 - 4b code section offset
 - 4b code entrypoint
+- [static data]
 
 4bytes
 
