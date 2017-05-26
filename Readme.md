@@ -30,7 +30,7 @@ User definable stack size
 ## Assembly instructions
 
 # Syntax
-Based on prefixes, $<register>, 0x<hexnum>
+Based on prefixes, $<register>, 0x<hexnum>, #<name> (data address)
 
 # Ops
 add reg/addr reg/number
@@ -44,7 +44,8 @@ ldr reg addr ; load 32bit value at address into reg
 push reg
 pop reg
 
-cmp reg,number
+cmp reg number
+cmp reg reg
 
 jmp reg/addr
 jne reg/addr
@@ -59,6 +60,3 @@ sys
 A contains the syscall number
 
 0 = write, B with data to write and C with length (limited to stdout for now)
-
-
-
