@@ -15,7 +15,7 @@ class MinCompiler:
         self.data = StaticDataHolder()
         self.output = b"" # Output
 
-        self.symbols = [] 
+        self.symbols = {}
         self.resolve = []
         self.entry = 0
 
@@ -29,9 +29,6 @@ class MinCompiler:
 
     def fromString(self,code):
         code = strutils.cleanCode(code)
-
-        header = b"MX"
-        header += b"\xff\xff\xff\xff"
 
         for line in code:
             toks = line.split(" ")
@@ -53,18 +50,46 @@ class MinCompiler:
                 self.data.addVar(name,StaticData(sd.DATA_STR,line+'\x00'))
 
             if op == "fn":
-                self.symbols.append((toks[1],len(self.output)))
+                self.symbols[toks[1]] = len(self.output)+len(self.data.getCompiled())+6 # 6 is header length
 
             if op == "ldr":
                 b = OpcodeBuilder(self,ops.OP_LDR)
                 b.setFirstReg(toks[1])
                 b.setSecondValue(toks[2])
 
-                generated = b.build()
-                self.output += generated
+                self.output += b.build()
 
             if op == "sys":
                 self.output += struct.pack("bb",ops.OP_SYS,0)
+
+            if op == "mov":
+                b = OpcodeBuilder(self,ops.OP_MOV)
+                b.setFirstReg(toks[1])
+                
+                if toks[2].startswith("$"):
+                    b.setSecondReg(toks[2])
+                else:
+                    b.setSecondValue(toks[2])
+                
+                self.output += b.build()
+
+            if op == "jmp":
+                loc = toks[1]
+
+                if loc not in self.symbols:
+                    raise ValueError("Symbol not found -> {}".format(loc))
+                else:
+                    b = OpcodeBuilder(self,ops.OP_JMP)
+                    b.setFirstValue(strutils.hexFromInt(self.symbols[loc]))
+
+                    self.output += b.buildSingle()
+
+
+        if "main" not in self.symbols:
+            raise ValueError("No entrypoint found")
+
+        header = b"MX"
+        header += struct.pack("i",self.symbols["main"])
 
         compiled = header + self.data.getCompiled() + self.output
         v = open("result.bin","wb")
