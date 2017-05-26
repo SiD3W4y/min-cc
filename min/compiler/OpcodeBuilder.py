@@ -67,3 +67,12 @@ class OpcodeBuilder:
             return struct.pack("bbih",self.op,arg_mask,self.first_arg,self.second_arg)
         if self.first_reg == 1 and self.second_reg == 1:
             return struct.pack("bbhh",self.op,arg_mask,self.first_arg,self.second_arg)
+
+    def buildSingle(self):
+        """ Builds only an opcode with the first arg"""
+        arg_mask = int((self.second_reg << 1) | self.first_reg)
+
+        if self.first_reg == 0:
+            return struct.pack("bbi",self.op,arg_mask,self.first_arg)
+        else:
+            return struct.pack("bbb",self.op,arg_mask,self.first_arg)
