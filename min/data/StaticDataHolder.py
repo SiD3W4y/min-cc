@@ -13,11 +13,8 @@ class StaticDataHolder:
         
         self.compiled += var.getPacked()
 
-    def getAddr(self,name):
-        if name in self.vars:
-            return self.vars[name]
-        else:
-            return "ERR"
+    def getVars(self):
+        return self.vars
 
     def getCompiled(self):
         return self.compiled
