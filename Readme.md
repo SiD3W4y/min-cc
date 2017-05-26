@@ -25,7 +25,13 @@ User definable stack size
 - 4b code entrypoint
 - [static data]
 
-4bytes
+### Opcode format
+```
+[OP][MODE][FIRST_ARG][SECOND_ARG]
+ 1    1       2/4       2/4
+```
+
+Mode is a byte representing arg type (reg vs addr/value), it is a mask of two bits, bit 0 for arg 1 and bit 1 for arg 2
 
 ## Assembly instructions
 
