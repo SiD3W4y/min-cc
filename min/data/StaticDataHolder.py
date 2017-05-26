@@ -21,3 +21,6 @@ class StaticDataHolder:
 
     def getCompiled(self):
         return self.compiled
+
+    def __str__(self):
+        return str(self.vars)
