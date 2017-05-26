@@ -1,9 +1,13 @@
-import min.utils.strutils as strutils
+import binascii
+import struct
 
-from min.data.StaticData import StaticData
+import min.utils.strutils as strutils
 import min.data.StaticData as sd
+import min.data.ops as ops
 
 from min.data.StaticDataHolder import StaticDataHolder
+from min.data.StaticData import StaticData
+from min.compiler.OpcodeBuilder import OpcodeBuilder
 
 class MinCompiler:
 
@@ -22,14 +26,12 @@ class MinCompiler:
 
         self.fromString(code)
 
-    def build_instr(self,paramA,paramB):
-        pass
 
     def fromString(self,code):
         code = strutils.cleanCode(code)
 
-        self.output += b"MX"
-        self.output += b"\xff\xff\xff\xff"
+        header = b"MX"
+        header += b"\xff\xff\xff\xff"
 
         for line in code:
             toks = line.split(" ")
@@ -48,13 +50,22 @@ class MinCompiler:
                 end = line.find('"')
                 line = line[:end]
 
-                self.data.addVar(name,StaticData(sd.DATA_STR,line))
+                self.data.addVar(name,StaticData(sd.DATA_STR,line+'\x00'))
 
             if op == "fn":
                 self.symbols.append((toks[1],len(self.output)))
 
-            if op == "mov":
+            if op == "ldr":
+                b = OpcodeBuilder(self,ops.OP_LDR)
+                b.setFirstReg(toks[1])
+                b.setSecondValue(toks[2])
 
+                generated = b.build()
+                self.output += generated
 
-        print(self.symbols)
-        print(self.data)
+            if op == "sys":
+                self.output += struct.pack("bb",ops.OP_SYS,0)
+
+        compiled = header + self.data.getCompiled() + self.output
+        v = open("result.bin","wb")
+        v.write(compiled)
