@@ -3,12 +3,16 @@
 str hello_world "Hello World !"
 num size 14
 
+fn exit
+	mov $A 0x2
+	mov $B 0x0
+	sys
+
 fn main
-	ldr $A #hello_world	; str address into A
-	ldr $B #size		; str size into B
+	mov $A 0x00		; syscall write number 
+	ldr $B #hello_world	; str address into A
+	ldr $C #size		; str size into B
 	sys			; syscall write
 
-	mov $A 0x2		; syscall exit
-	mov $B 0x0		; exit code
-	sys			; syscall exit
+	jmp exit
 
