@@ -11,6 +11,8 @@ class MinCompiler:
         self.data = StaticDataHolder()
         self.output = b"" # Output
 
+        self.symbols = [] 
+        self.resolve = []
         self.entry = 0
 
     def fromFile(self,path):
@@ -19,6 +21,9 @@ class MinCompiler:
         fp.close()
 
         self.fromString(code)
+
+    def build_instr(self,paramA,paramB):
+        pass
 
     def fromString(self,code):
         code = strutils.cleanCode(code)
@@ -45,5 +50,11 @@ class MinCompiler:
 
                 self.data.addVar(name,StaticData(sd.DATA_STR,line))
 
+            if op == "fn":
+                self.symbols.append((toks[1],len(self.output)))
 
-       #open("data.hex","wb").write(self.output + self.data.getCompiled())
+            if op == "mov":
+
+
+        print(self.symbols)
+        print(self.data)
