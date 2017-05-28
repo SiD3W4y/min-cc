@@ -5,7 +5,7 @@ class StaticDataHolder:
     def __init__(self):
         self.compiled = b""
         self.vars = {}
-        self.offset = 6 # 2b magic, 4b entrypoint offset
+        self.offset = 10 # 2b magic, 4b entrypoint offset, 4b data section size
 
     def addVar(self,name,var):
         self.vars[name] = self.offset

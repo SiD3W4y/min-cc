@@ -90,6 +90,7 @@ class MinCompiler:
 
         header = b"MX"
         header += struct.pack("i",self.symbols["main"])
+        header += struct.pack("i",len(self.data.getCompiled())) # Knowing how much data to skip while reading
 
         compiled = header + self.data.getCompiled() + self.output
         v = open("result.bin","wb")
