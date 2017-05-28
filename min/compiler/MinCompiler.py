@@ -50,7 +50,7 @@ class MinCompiler:
                 self.data.addVar(name,StaticData(sd.DATA_STR,line+'\x00'))
 
             if op == "fn":
-                self.symbols[toks[1]] = len(self.output)+len(self.data.getCompiled())+6 # 6 is header length
+                self.symbols[toks[1]] = len(self.output)+len(self.data.getCompiled())+10 # 10 is header length
 
             if op == "ldr":
                 b = OpcodeBuilder(self,ops.OP_LDR)
