@@ -1,7 +1,9 @@
 import logging
+import struct
 from sys import exit
 
 import min.data.regs as regs
+import min.data.ops as ops
 
 """
 Instruction can be considered as an intermediate level between text instruction and binary opcodes
@@ -40,11 +42,15 @@ class Instruction:
 
     def setFirstSlot(self,number=None,reg=None,reference=None): # Number will be converted,reg will be too and reference will set a flag so it will be resolved later on
         if number != None:
+            if isinstance(number,int):
+                self.first_value = number
+                return
             if number.startswith("#"):
                 self.first_value = int(number[1:])
                 return
             if number.startswith("0x"):
                 self.first_value = int(number,16)
+                return
 
         if reg != None:
             reg = reg[1:]
@@ -64,13 +70,17 @@ class Instruction:
 
     def setSecondSlot(self,number=None,reg=None,reference=None): # Number will be converted,reg will be too and reference will set a flag so it will be resolved later on
         if number != None:
+            if isinstance(number,int):
+                self.second_value = number
+                return
             if number.startswith("#"):
                 self.second_value = int(number[1:])
                 return
             if number.startswith("0x"):
                 self.second_value = int(number,16)
-
+                return
         if reg != None:
+            reg = reg[1:]
             if reg in regs.REGS:
                 self.second_reg = 1
                 self.second_value = regs.REGS.index(reg)
@@ -97,7 +107,36 @@ class Instruction:
         if self.itype == self.TYPE_FCN: # Type fcn is just a marker to an offset
             return 0
         if self.itype == self.TYPE_INS:
-            return 2+(2*(4-2*self.first_reg)+(4-2*self.second_reg))
+            return 2+((4-2*self.first_reg)+(4-2*self.second_reg))
+
+
+    def build(self):
+        arg_mask = int((self.second_reg << 1) | self.first_reg)
+
+        if self.itype == self.TYPE_STR:
+            return bytes(self.first_value,"ASCII")
+        if self.itype == self.TYPE_INT:
+            return struct.pack("I",self.first_value)
+        
+        op = ops.ops.index(self.symbol)
+
+                
+        p8 = lambda k:struct.pack("B",k)
+        p16 = lambda k:struct.pack("H",k)
+        p32 = lambda k:struct.pack("I",k)
+
+
+        if self.first_reg == 0 and self.second_reg == 0:
+            return p16((op << 8) | arg_mask)+p32(self.first_value)+p32(self.second_value)
+        if self.first_reg == 1 and self.second_reg == 0:
+            return p16((op << 8) | arg_mask)+p16(self.first_value)+p32(self.second_value)
+        if self.first_reg == 0 and self.second_reg == 1:
+            return p16((op << 8) | arg_mask)+p32(self.first_value)+p16(self.second_value)
+        if self.first_reg == 1 and self.second_reg == 1:
+            return p16((op << 8) | arg_mask)+p16(self.first_value)+p16(self.second_value)
+
+
+
 
     def __str__(self):
         if self.itype == self.TYPE_INT:
