@@ -1,6 +1,7 @@
 import binascii
 import struct
 import logging
+from sys import exit
 
 import min.utils.strutils as strutils
 import min.data.StaticData as sd
@@ -31,10 +32,28 @@ class MinCompiler:
         #self.fromString(code)
         self.protoInstruction(code)
 
+    def fixRef(self,i):
+        fr = i.first_reference
+        sr = i.second_reference
+
+
+        if fr != "":
+            if fr in self.symbols:
+                i.setFirstSlot(number=self.symbols[fr])
+            else:
+                logging.error("Undefined symbol (first arg) : {}".format(fr))
+                exit(-1)
+        if sr != "":
+            if sr in self.symbols:
+                i.setSecondSlot(number=self.symbols[sr])
+            else:
+                logging.error("Undefined symbol (second arg) : {}".format(sr))
+                exit(-1)
+        return i
+
     def protoInstruction(self,code):
         code = strutils.cleanCode(code)
-        ip = 6 # MX + entrypoint
-        ref_map = {} # Dict to hold references
+        ip = 10 # MX + entrypoint + boundary (because python has dumb packing and adds bytes for padding, messing up with last file instructions"
 
         for line in code:
             toks = line.split(" ")
@@ -47,7 +66,7 @@ class MinCompiler:
                 i.setValue(number=int(toks[2]))
                 self.instructions.append(i)
                 
-                ref_map[name] = ip
+                self.symbols[name] = ip
                 ip += i.getSize()
 
             if op == "str":
@@ -62,14 +81,14 @@ class MinCompiler:
                 i.setValue(string=line+"\x00")
                 self.instructions.append(i)
                 
-                ref_map[name] = ip
+                self.symbols[name] = ip
                 ip += i.getSize()
 
 
             if op == "fn":
                 logging.debug("function {}, offset = {}".format(toks[1],ip))
                 i = Instruction(ip,itype=Instruction.TYPE_FCN,symbol=toks[1])
-                ref_map[toks[1]] = ip
+                self.symbols[toks[1]] = ip
 
                 self.instructions.append(i)
 
@@ -81,84 +100,68 @@ class MinCompiler:
                 self.instructions.append(i)
                 ip += i.getSize()
 
-
-
-        for ins in self.instructions:
-            print("{} {}".format(ins.addr,ins))
-        
-        print(ref_map)
-
-
-    def fromString(self,code):
-        code = strutils.cleanCode(code)
-
-        for line in code:
-            toks = line.split(" ")
-
-            op = toks[0]
-
-            if op == "num":
-                name = toks[1]
-                self.data.addVar(name,StaticData(sd.DATA_NUM,int(toks[2])))
-
-            if op == "str":
-                name = toks[1]
-
-                begin = line.find('"')
-                line = line[begin+1:]
-                end = line.find('"')
-                line = line[:end]
-
-                self.data.addVar(name,StaticData(sd.DATA_STR,line+'\x00'))
-
-            if op == "fn":
-                self.symbols[toks[1]] = len(self.output)+len(self.data.getCompiled())+10 # 10 is header length
-
-            if op == "ldr":
-                b = OpcodeBuilder(self,ops.OP_LDR)
-                b.setFirstReg(toks[1])
-                b.setSecondValue(toks[2])
-
-                self.output += b.build()
-
             if op == "sys":
-                b = OpcodeBuilder(self,ops.OP_SYS)
-                b.setFirstReg("$A")
-                b.setSecondReg("$A")
-                print(len(b.build()))
-                self.output += b.build()
+                i = Instruction(ip,itype=Instruction.TYPE_INS,symbol=ops.ops[ops.OP_SYS])
+                i.setFirstSlot(reg="$A")
+                i.setSecondSlot(reg="$A")
+
+                self.instructions.append(i)
+                ip += i.getSize()
 
             if op == "mov":
-                b = OpcodeBuilder(self,ops.OP_MOV)
-                b.setFirstReg(toks[1])
+                i = Instruction(ip,itype=Instruction.TYPE_INS,symbol=ops.ops[ops.OP_MOV])
+                i.setFirstSlot(reg=toks[1])
                 
                 if toks[2].startswith("$"):
-                    b.setSecondReg(toks[2])
+                    i.setSecondSlot(reg=toks[2])
                 else:
-                    b.setSecondValue(toks[2])
-                
-                self.output += b.build()
+                    if toks[2].startswith("0x"):
+                        i.setSecondSlot(number=toks[2])
+                    elif toks[2].startswith("#"):
+                        name = toks[2][1:]
+                        if name.replace("_","").isalpha():
+                            i.setSecondSlot(reference="#"+name)
+                        
+                        if name.isdigit():
+                            i.setSecondSlot(number=int(name))
+                    else:
+                        logging.error("Incorrect value in second MOV operand : {}".format(toks[2]))
+                        exit(-1)
+
+                self.instructions.append(i)
+                ip += i.getSize()
 
             if op == "jmp":
-                loc = toks[1]
+                i = Instruction(ip,itype=Instruction.TYPE_INS,symbol=ops.ops[ops.OP_JMP])
+                i.setFirstSlot(reference=toks[1])
+                #i.setFirstSlot(number="0xffffffff")
+                i.setSecondSlot(reg="$F")
+                self.instructions.append(i)
 
-                if loc not in self.symbols:
-                    raise ValueError("Symbol not found -> {}".format(loc))
-                else:
-                    b = OpcodeBuilder(self,ops.OP_JMP)
-                    b.setFirstValue(hex(self.symbols[loc]))
-                    b.setSecondReg("$A")
-
-                    self.output += b.build()
-
+                ip += i.getSize()
 
         if "main" not in self.symbols:
-            raise ValueError("No entrypoint found")
+            logging.error("\"main\" function not found !")
+            exit(-1)
 
-        header = b"MX"
-        header += struct.pack("i",self.symbols["main"])
-        header += struct.pack("i",len(self.data.getCompiled())) # Knowing how much data to skip while reading
+        logging.info("First pass finished, now fixing references")
+        
+        self.instructions = [self.fixRef(i) for i in self.instructions]
+        self.instructions = list(filter(lambda k:k.itype != Instruction.TYPE_FCN,self.instructions))
+        
+        binary_size = sum([i.getSize() for i in self.instructions])+10
+        logging.info("Final binary size : {}b".format(binary_size))
 
-        compiled = header + self.data.getCompiled() + self.output
-        v = open("result.bin","wb")
-        v.write(compiled)
+        self.output += b"MX" # Magic
+        self.output += struct.pack("I",self.symbols["main"]) #Entrypoint
+        self.output += struct.pack("I",binary_size)
+
+        for i in self.instructions:
+            self.output += i.build()
+
+        for i in self.instructions:
+            logging.debug("{} {} sz = {}".format(i.addr,i,len(i.build())))
+
+    
+    def write(self,path):
+        open(path,"wb").write(self.output)

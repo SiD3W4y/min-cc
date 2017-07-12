@@ -26,7 +26,9 @@ if __name__ == "__main__":
 
     logging.info("Compiling {}".format(args.input_file))
     
-    #mcc = MinCompiler()
-    #mcc.fromFile("tests/hello_world.min")
+    mcc = MinCompiler()
+    mcc.fromFile(args.input_file)
+
+    mcc.write(args.output_file)
 
 
