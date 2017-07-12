@@ -127,13 +127,13 @@ class Instruction:
 
 
         if self.first_reg == 0 and self.second_reg == 0:
-            return p16((op << 8) | arg_mask)+p32(self.first_value)+p32(self.second_value)
+            return p8(op)+p8(arg_mask)+p32(self.first_value)+p32(self.second_value)
         if self.first_reg == 1 and self.second_reg == 0:
-            return p16((op << 8) | arg_mask)+p16(self.first_value)+p32(self.second_value)
+            return p8(op)+p8(arg_mask)+p16(self.first_value)+p32(self.second_value)
         if self.first_reg == 0 and self.second_reg == 1:
-            return p16((op << 8) | arg_mask)+p32(self.first_value)+p16(self.second_value)
+            return p8(op)+p8(arg_mask)+p32(self.first_value)+p16(self.second_value)
         if self.first_reg == 1 and self.second_reg == 1:
-            return p16((op << 8) | arg_mask)+p16(self.first_value)+p16(self.second_value)
+            return p8(op)+p8(arg_mask)+p16(self.first_value)+p16(self.second_value)
 
 
 
