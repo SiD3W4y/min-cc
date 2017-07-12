@@ -1,5 +1,20 @@
 ### Min-VM : Small virtual machine
 
+## Usage
+```
+usage: mcc.py [-h] [-d] [-i INPUT_FILE] [-o OUTPUT_FILE]
+
+Assembler/compiler for min assembly language
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -d, --debug           enables debugging information
+  -i INPUT_FILE, --input INPUT_FILE
+                        set input file
+  -o OUTPUT_FILE, --output OUTPUT_FILE
+                        set output file (default -> a.mx)
+```
+
 ## VM Architecture
 
 Small vm with a few registers :
@@ -21,9 +36,9 @@ User definable stack size
 ## Bytecode executable format (.mx)
 
 - 2b magic "MX"
-- 4b code section offset
 - 4b code entrypoint
-- [static data]
+- 4b binary size
+- [data]
 
 ### Opcode format
 ```
