@@ -8,3 +8,5 @@ OP_PUSH = 0x07
 OP_POP = 0x08
 OP_CMP = 0x09
 OP_JMP = 0x0a
+
+ops = ["","SYS","ADD","SUB","MUL","MOV","LDR","PUSH","POP","CMP","JMP"]

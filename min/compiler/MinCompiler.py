@@ -1,5 +1,6 @@
 import binascii
 import struct
+import logging
 
 import min.utils.strutils as strutils
 import min.data.StaticData as sd
@@ -9,6 +10,8 @@ from min.data.StaticDataHolder import StaticDataHolder
 from min.data.StaticData import StaticData
 from min.compiler.OpcodeBuilder import OpcodeBuilder
 
+from min.data.Instruction import Instruction
+
 class MinCompiler:
 
     def __init__(self):
@@ -17,6 +20,7 @@ class MinCompiler:
 
         self.symbols = {}
         self.resolve = []
+        self.instructions = []
         self.entry = 0
 
     def fromFile(self,path):
@@ -24,7 +28,65 @@ class MinCompiler:
         code = fp.read()
         fp.close()
 
-        self.fromString(code)
+        #self.fromString(code)
+        self.protoInstruction(code)
+
+    def protoInstruction(self,code):
+        code = strutils.cleanCode(code)
+        ip = 6 # MX + entrypoint
+        ref_map = {} # Dict to hold references
+
+        for line in code:
+            toks = line.split(" ")
+
+            op = toks[0]
+
+            if op == "num":
+                name = toks[1]
+                i = Instruction(ip,symbol=name)
+                i.setValue(number=int(toks[2]))
+                self.instructions.append(i)
+                
+                ref_map[name] = ip
+                ip += i.getSize()
+
+            if op == "str":
+                name = toks[1]
+
+                begin = line.find('"')
+                line = line[begin+1:]
+                end = line.find('"')
+                line = line[:end]
+
+                i = Instruction(ip,symbol=name)
+                i.setValue(string=line+"\x00")
+                self.instructions.append(i)
+                
+                ref_map[name] = ip
+                ip += i.getSize()
+
+
+            if op == "fn":
+                logging.debug("function {}, offset = {}".format(toks[1],ip))
+                i = Instruction(ip,itype=Instruction.TYPE_FCN,symbol=toks[1])
+                ref_map[toks[1]] = ip
+
+                self.instructions.append(i)
+
+            if op == "ldr": 
+                i = Instruction(ip,itype=Instruction.TYPE_INS,symbol=ops.ops[ops.OP_LDR])
+                i.setFirstSlot(reg=toks[1])
+                i.setSecondSlot(reference=toks[2])
+
+                self.instructions.append(i)
+                ip += i.getSize()
+
+
+
+        for ins in self.instructions:
+            print("{} {}".format(ins.addr,ins))
+        
+        print(ref_map)
 
 
     def fromString(self,code):
