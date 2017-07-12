@@ -15,5 +15,4 @@ fn main
 	ldr $D #size		; str size into B
 	sys			; syscall write
 	jmp exit
-	mov $A 0x00
 
