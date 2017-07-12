@@ -37,7 +37,7 @@ class Instruction:
             self.itype = self.TYPE_INT
         
         if string != None:
-            self.first_value = string
+            self.first_value = bytes(string,"UTF-8").decode("unicode_escape")
             self.itype = self.TYPE_STR
 
     def setFirstSlot(self,number=None,reg=None,reference=None): # Number will be converted,reg will be too and reference will set a flag so it will be resolved later on
