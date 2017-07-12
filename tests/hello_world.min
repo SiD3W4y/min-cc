@@ -1,11 +1,11 @@
-; Data defined at the beginning of the file
+; Data can be defined anywhere, at the top of the file
 
 str hello_world "Hello World !"
 num size 14
 
 fn exit
-	mov $A 0x02
-	mov $B 0x00
+	mov $A 0x02		; syscall exit
+	mov $B 0x00		; exit code
 	sys
 
 fn main
@@ -15,3 +15,6 @@ fn main
 	ldr $D #size		; str size into B
 	sys			; syscall write
 	jmp exit
+
+; Or at the bottom for example
+str useless_string "Hey it's me, useless !"
