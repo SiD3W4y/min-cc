@@ -4,15 +4,16 @@ str hello_world "Hello World !"
 num size 14
 
 fn exit
-	mov $A 0x2
-	mov $B 0x0
+	mov $A 0x02
+	mov $B 0x00
 	sys
 
 fn main
 	mov $A 0x00		; syscall write number 
-	ldr $B #hello_world	; str address into A
-	ldr $C #size		; str size into B
+	mov $B 0x00		; file descriptor
+	mov $C #hello_world	; str address into A
+	ldr $D #size		; str size into B
 	sys			; syscall write
-
 	jmp exit
+	mov $A 0x00
 

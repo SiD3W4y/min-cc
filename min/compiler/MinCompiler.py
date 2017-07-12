@@ -60,7 +60,11 @@ class MinCompiler:
                 self.output += b.build()
 
             if op == "sys":
-                self.output += struct.pack("bb",ops.OP_SYS,0)
+                b = OpcodeBuilder(self,ops.OP_SYS)
+                b.setFirstReg("$A")
+                b.setSecondReg("$A")
+                print(len(b.build()))
+                self.output += b.build()
 
             if op == "mov":
                 b = OpcodeBuilder(self,ops.OP_MOV)
@@ -80,9 +84,10 @@ class MinCompiler:
                     raise ValueError("Symbol not found -> {}".format(loc))
                 else:
                     b = OpcodeBuilder(self,ops.OP_JMP)
-                    b.setFirstValue(strutils.hexFromInt(self.symbols[loc]))
+                    b.setFirstValue(hex(self.symbols[loc]))
+                    b.setSecondReg("$A")
 
-                    self.output += b.buildSingle()
+                    self.output += b.build()
 
 
         if "main" not in self.symbols:

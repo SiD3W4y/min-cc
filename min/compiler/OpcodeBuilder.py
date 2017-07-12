@@ -58,7 +58,7 @@ class OpcodeBuilder:
 
     def build(self):
         arg_mask = int((self.second_reg << 1) | self.first_reg) # Bit 0 : arg-1 , Bit 1 : arg-2
-
+        #print("hex(arg_mask))
         if self.first_reg == 0 and self.second_reg == 0:
             return struct.pack("bbii",self.op,arg_mask,self.first_arg,self.second_arg)
         if self.first_reg == 1 and self.second_reg == 0:
