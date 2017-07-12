@@ -4,23 +4,14 @@ import logging
 from sys import exit
 
 import min.utils.strutils as strutils
-import min.data.StaticData as sd
 import min.data.ops as ops
-
-from min.data.StaticDataHolder import StaticDataHolder
-from min.data.StaticData import StaticData
-from min.compiler.OpcodeBuilder import OpcodeBuilder
-
 from min.data.Instruction import Instruction
 
 class MinCompiler:
 
     def __init__(self):
-        self.data = StaticDataHolder()
         self.output = b"" # Output
-
         self.symbols = {}
-        self.resolve = []
         self.instructions = []
         self.entry = 0
 
@@ -29,8 +20,7 @@ class MinCompiler:
         code = fp.read()
         fp.close()
 
-        #self.fromString(code)
-        self.protoInstruction(code)
+        self.fromString(code)
 
     def fixRef(self,i):
         fr = i.first_reference
@@ -51,7 +41,7 @@ class MinCompiler:
                 exit(-1)
         return i
 
-    def protoInstruction(self,code):
+    def fromString(self,code):
         code = strutils.cleanCode(code)
         ip = 10 # MX + entrypoint + boundary (because python has dumb packing and adds bytes for padding, messing up with last file instructions"
 
@@ -134,7 +124,6 @@ class MinCompiler:
             if op == "jmp":
                 i = Instruction(ip,itype=Instruction.TYPE_INS,symbol=ops.ops[ops.OP_JMP])
                 i.setFirstSlot(reference=toks[1])
-                #i.setFirstSlot(number="0xffffffff")
                 i.setSecondSlot(reg="$F")
                 self.instructions.append(i)
 
