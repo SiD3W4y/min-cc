@@ -150,7 +150,7 @@ class Instruction:
         if self.itype == self.TYPE_FCN:
             return "[TYPE_FCN] {} -> {}".format(self.symbol,self.addr)
         if self.itype == self.TYPE_INS:
-            return "[TYPE_INS] {} {} {}".format(self.symbol,self.first_value,self.second_value)
+            return "[TYPE_INS]({}) {} {} {}".format(hex(ops.ops.index(self.symbol)),self.symbol,self.first_value,self.second_value)
 
         logging.error("Undefined Instruction type, aborting")
         exit(-1)
