@@ -59,6 +59,22 @@ class MinCompiler:
                 self.symbols[name] = ip
                 ip += i.getSize()
 
+            if op == "slot":
+                name = toks[1]
+                value = toks[2]
+                
+                if value.startswith("0x"):
+                    value = int(value,16)
+                else:
+                    value = int(value)
+
+                i = Instruction(ip,symbol=name)
+                i.setValue(raw_bytes=bytearray(value))
+                
+                self.instructions.append(i)
+                self.symbols[name] = ip
+                ip += i.getSize()
+
             if op == "str":
                 name = toks[1]
 

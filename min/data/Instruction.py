@@ -31,13 +31,17 @@ class Instruction:
         self.first_reference = ""
         self.second_reference = ""
 
-    def setValue(self,number=None,string=None):
+    def setValue(self,number=None,string=None,raw_bytes=None):
         if number != None:
             self.first_value = number
             self.itype = self.TYPE_INT
         
         if string != None:
             self.first_value = bytes(string,"UTF-8").decode("unicode_escape")
+            self.itype = self.TYPE_STR
+
+        if raw_bytes != None:
+            self.first_value = raw_bytes
             self.itype = self.TYPE_STR
 
     def setFirstSlot(self,number=None,reg=None,reference=None): # Number will be converted,reg will be too and reference will set a flag so it will be resolved later on
@@ -114,7 +118,7 @@ class Instruction:
         arg_mask = int((self.second_reg << 1) | self.first_reg)
 
         if self.itype == self.TYPE_STR:
-            return bytes(self.first_value,"ASCII")
+            return self.first_value
         if self.itype == self.TYPE_INT:
             return struct.pack("I",self.first_value)
         
