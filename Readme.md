@@ -68,12 +68,12 @@ Based on prefixes, $<register>, 0x<hexnum>, #<name> (data address)
     * [ ] **strb** {r} {a}
     * [ ] **push** {r} 
     * [ ] **pop** {r}
-    * [ ] **cmp** {r} {r,n}
+    * [x] **cmp** {r} {r,n}
     * [x] **jmp** {a}
-    * [ ] **jne** {a}
-    * [ ] **je** {a}
-    * [ ] **jle** {a}
-    * [ ] **jbe** {a}
+    * [x] **jne** {a}
+    * [x] **je** {a}
+    * [x] **jle** {a}
+    * [x] **jbe** {a}
     * [x] **sys**
     * [x] **xor** {r} {r,n}
     * [x] **and** {r} {r,n}
