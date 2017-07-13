@@ -11,13 +11,15 @@ OP_POP = 0x9
 OP_CMP = 0xa
 OP_JMP = 0xb
 OP_JNE = 0xc
-OP_JLE = 0xd
-OP_JBE = 0xe
-OP_SYS = 0xf
-OP_XOR = 0x10
-OP_AND = 0x11
-OP_SHR = 0x12
-OP_SHL = 0x13
+OP_JE = 0xd
+OP_JLE = 0xe
+OP_JBE = 0xf
+OP_SYS = 0x10
+OP_XOR = 0x11
+OP_AND = 0x12
+OP_OR = 0x13
+OP_SHR = 0x14
+OP_SHL = 0x15
 
-ops = ["ADD","SUB","MUL","MOV","LDR","LDRB","STR","STRB","PUSH","POP","CMP","JMP","JNE","JLE","JBE","SYS","XOR","AND","SHR","SHL"]
+ops = ["ADD","SUB","MUL","MOV","LDR","LDRB","STR","STRB","PUSH","POP","CMP","JMP","JNE","JE","JLE","JBE","SYS","XOR","AND","OR","SHR","SHL"]
 
