@@ -1,19 +1,19 @@
-string lower_sucess "Lower worked"
-string bigger_sucess "Bigger worked"
-string equal_sucess "Equal worked"
-string final "All test passed :P"
+string lower_sucess "Lower worked\n"
+string bigger_sucess "Bigger worked\n"
+string equal_sucess "Equal worked\n"
+string final "All passed !\n"
 
 fn main
 	xor $A $A
 	cmp $A 0x00
-	jeq step_2
+	je step_2
 	jmp exit
 
 fn step_2
 	xor $A $A
 	xor $B $B
 	mov $C #equal_sucess
-	mov $D #20
+	mov $D #14
 	sys
 
 	xor $A $A
@@ -25,7 +25,7 @@ fn step_3
 	xor $A $A
 	xor $B $B
 	mov $C #lower_sucess
-	mov $D #20
+	mov $D #14
 	sys
 
 	mov $A 0x20
@@ -39,7 +39,7 @@ fn step_4
 	xor $A $A
 	xor $B $B
 	mov $C #bigger_sucess
-	mov $D #20
+	mov $D #14
 	sys
 	
 	mov $C #final
