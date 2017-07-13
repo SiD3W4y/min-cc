@@ -1,0 +1,54 @@
+string lower_sucess "Lower worked"
+string bigger_sucess "Bigger worked"
+string equal_sucess "Equal worked"
+string final "All test passed :P"
+
+fn main
+	xor $A $A
+	cmp $A 0x00
+	jeq step_2
+	jmp exit
+
+fn step_2
+	xor $A $A
+	xor $B $B
+	mov $C #equal_sucess
+	mov $D #20
+	sys
+
+	xor $A $A
+	cmp $A 0x20
+	jle step_3
+	jmp exit
+
+fn step_3
+	xor $A $A
+	xor $B $B
+	mov $C #lower_sucess
+	mov $D #20
+	sys
+
+	mov $A 0x20
+	mov $B 0x10
+
+	cmp $A $B
+	jbe step_4
+	jmp exit
+
+fn step_4
+	xor $A $A
+	xor $B $B
+	mov $C #bigger_sucess
+	mov $D #20
+	sys
+	
+	mov $C #final
+	sys
+
+	jmp exit
+
+fn exit
+	mov $A 0x02
+	xor $B $B
+	sys
+	
