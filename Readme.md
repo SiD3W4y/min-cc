@@ -53,31 +53,38 @@ Mode is a byte representing arg type (reg vs addr/value), it is a mask of two bi
 # Syntax
 Based on prefixes, $<register>, 0x<hexnum>, #<name> (data address)
 
-# Ops
-add reg/addr reg/number
-sub reg/addr reg/number
-mul reg/addr reg/number
-
-mov reg reg/number
-
-ldr reg addr ; load 32bit value at address into reg
-
-push reg
-pop reg
-
-cmp reg number
-cmp reg reg
-
-jmp reg/addr
-jne reg/addr
-je  reg/addr
-jle reg/addr
-jbe reg/addr
-
-sys
-
+## Instruction coverage
+* r = reg
+* a = addr
+* n = number
+* Instructions :
+    * [ ] **add** {r} {r,n} 
+    * [ ] **sub** {r} {r,n} 
+    * [ ] **mul** {r} {r,n}
+    * [x] **mov** {r} {r,n}
+    * [x] **ldr** {r} {a}
+    * [ ] **ldrb** {r} {a}
+    * [ ] **str** {r} {a}
+    * [ ] **strb** {r} {a}
+    * [ ] **push** {r} 
+    * [ ] **pop** {r}
+    * [ ] **cmp** {r} {r,n}
+    * [x] **jmp** {a}
+    * [ ] **jne** {a}
+    * [ ] **je** {a}
+    * [ ] **jle** {a}
+    * [ ] **jbe** {a}
+    * [x] **sys**
+    * [ ] **xor** {r} {r,n}
+    * [ ] **and** {r} {r,n}
+    * [ ] **or** {r} {r,n}
+    * [ ] **shr** {r} {r,n}
+    * [ ] **shl** {r} {r,n}
 
 # Syscalls
-A contains the syscall number
 
-0 = write, B with data to write and C with length (limited to stdout for now)
+| syscall | A | B | C | D | E | F |
+|:---------:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **write**   | 0x00 | fd | buff | size | X | X |
+| **read**    | 0x01 | fd | buff | size | X | X |
+| **exit**    | 0x02 | exit_code | X | X | X | X |
