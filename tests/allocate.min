@@ -1,0 +1,21 @@
+; Using "slot" type to allocate space
+
+slot buffer 500 ; Allocating 500 bytes
+num size 15
+
+fn main
+	mov $A 0x01	; Syscall read
+	mov $B 0x01	; fd (stdin)
+	mov $C #buffer	; buffer address
+	ldr $D #size	; Read 0xf bytes
+	sys
+
+	mov $A 0x00	; Syscall write
+	mov $B 0x00	; fd (stdout)
+	mov $C #buffer	; buffer address
+	ldr $D #size	; Write 0xf bytes
+	sys
+
+	mov $A 0x02
+	mov $B 0x00
+	sys
