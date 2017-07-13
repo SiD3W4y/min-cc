@@ -75,11 +75,11 @@ Based on prefixes, $<register>, 0x<hexnum>, #<name> (data address)
     * [ ] **jle** {a}
     * [ ] **jbe** {a}
     * [x] **sys**
-    * [ ] **xor** {r} {r,n}
-    * [ ] **and** {r} {r,n}
-    * [ ] **or** {r} {r,n}
-    * [ ] **shr** {r} {r,n}
-    * [ ] **shl** {r} {r,n}
+    * [x] **xor** {r} {r,n}
+    * [x] **and** {r} {r,n}
+    * [x] **or** {r} {r,n}
+    * [x] **shr** {r} {r,n}
+    * [x] **shl** {r} {r,n}
 
 # Syscalls
 
