@@ -1,0 +1,12 @@
+
+
+fn main
+	add $A 0x2
+	add $A #22
+	sub $A #15
+	mul $A #2
+	
+	mov $B $A
+	
+	mov $A 0x02
+	sys
