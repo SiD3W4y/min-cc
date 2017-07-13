@@ -1,6 +1,6 @@
 ; Data can be defined anywhere, at the top of the file
 
-str hello_world "Hello World !\n"
+string hello_world "Hello World !\n"
 num size 14
 
 fn exit
@@ -17,4 +17,4 @@ fn main
 	jmp exit
 
 ; Or at the bottom for example
-str useless_string "Hey it's me, useless !"
+string useless_string "Hey it's me, useless !"

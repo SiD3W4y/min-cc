@@ -75,7 +75,7 @@ class MinCompiler:
                 self.symbols[name] = ip
                 ip += i.getSize()
 
-            if op == "str":
+            if op == "string":
                 name = toks[1]
 
                 begin = line.find('"')
@@ -90,7 +90,7 @@ class MinCompiler:
                 self.symbols[name] = ip
                 ip += i.getSize()
             
-            if op in ["add","sub","mul"]:
+            if op in ["add","sub","mul","xor","and","or","shr","shl"]:
                 i = Instruction(ip,itype=Instruction.TYPE_INS)
                 i.setFirstSlot(reg=toks[1])
                 
@@ -99,16 +99,13 @@ class MinCompiler:
                 else:
                     i.setSecondSlot(number=toks[2])
                 
-                if op == "add":
-                    i.symbol = ops.ops[ops.OP_ADD]
-                if op == "sub":
-                    i.symbol = ops.ops[ops.OP_SUB]
-                if op == "mul":
-                    i.symbol = ops.ops[ops.OP_MUL]
+                name = op.upper()
+                i.symbol = name
 
                 self.instructions.append(i)
 
                 ip += i.getSize()
+
 
             if op == "fn":
                 logging.debug("function {}, offset = {}".format(toks[1],ip))
