@@ -89,7 +89,26 @@ class MinCompiler:
                 
                 self.symbols[name] = ip
                 ip += i.getSize()
+            
+            if op in ["add","sub","mul"]:
+                i = Instruction(ip,itype=Instruction.TYPE_INS)
+                i.setFirstSlot(reg=toks[1])
+                
+                if toks[2].startswith("$"):
+                    i.setSecondSlot(reg=toks[2])
+                else:
+                    i.setSecondSlot(number=toks[2])
+                
+                if op == "add":
+                    i.symbol = ops.ops[ops.OP_ADD]
+                if op == "sub":
+                    i.symbol = ops.ops[ops.OP_SUB]
+                if op == "mul":
+                    i.symbol = ops.ops[ops.OP_MUL]
 
+                self.instructions.append(i)
+
+                ip += i.getSize()
 
             if op == "fn":
                 logging.debug("function {}, offset = {}".format(toks[1],ip))
