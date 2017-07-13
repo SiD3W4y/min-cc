@@ -1,6 +1,6 @@
 ; Data can be defined anywhere, at the top of the file
 
-str hello_world "Hello World !"
+str hello_world "Hello World !\n"
 num size 14
 
 fn exit
