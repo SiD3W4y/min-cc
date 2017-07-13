@@ -1,0 +1,16 @@
+
+fn main
+	mov $A 0xff
+	xor $A $A	; = 0
+
+	add $A #1
+	shl $A #1	; 2
+	shr $A #1	; 1
+
+	or $A 0x25	; 37
+	and $A 0x0f	; 5
+
+	mov $B $A
+	mov $A 0x02
+
+	sys	; Exit code 5 
