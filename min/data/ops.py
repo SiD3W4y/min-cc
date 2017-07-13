@@ -1,12 +1,23 @@
-OP_SYS = 0x01
-OP_ADD = 0x02
-OP_SUB = 0x03
-OP_MUL = 0x04
-OP_MOV = 0x05
-OP_LDR = 0x06
-OP_PUSH = 0x07
-OP_POP = 0x08
-OP_CMP = 0x09
-OP_JMP = 0x0a
+OP_ADD = 0x0
+OP_SUB = 0x1
+OP_MUL = 0x2
+OP_MOV = 0x3
+OP_LDR = 0x4
+OP_LDRB = 0x5
+OP_STR = 0x6
+OP_STRB = 0x7
+OP_PUSH = 0x8
+OP_POP = 0x9
+OP_CMP = 0xa
+OP_JMP = 0xb
+OP_JNE = 0xc
+OP_JLE = 0xd
+OP_JBE = 0xe
+OP_SYS = 0xf
+OP_XOR = 0x10
+OP_AND = 0x11
+OP_SHR = 0x12
+OP_SHL = 0x13
 
-ops = ["","SYS","ADD","SUB","MUL","MOV","LDR","PUSH","POP","CMP","JMP"]
+ops = ["ADD","SUB","MUL","MOV","LDR","LDRB","STR","STRB","PUSH","POP","CMP","JMP","JNE","JLE","JBE","SYS","XOR","AND","SHR","SHL"]
+
