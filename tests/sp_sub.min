@@ -1,0 +1,5 @@
+fn main
+	sub $SP 0xff
+	mov $B $SP
+	mov $A 0x00
+	sys
