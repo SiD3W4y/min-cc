@@ -90,9 +90,14 @@ class MinCompiler:
                 self.symbols[name] = ip
                 ip += i.getSize()
             
-            if op in ["add","sub","mul","xor","and","or","shr","shl"]:
+            if op in ["add","sub","mul","xor","and","or","shr","shl","cmp"]:
                 i = Instruction(ip,itype=Instruction.TYPE_INS)
-                i.setFirstSlot(reg=toks[1])
+                
+                if toks[1].startswith("$"):
+                    i.setFirstSlot(reg=toks[1])
+                else:
+                    logging.error("{} first argument must be a register".format(op.upper()))
+                    exit(-1)
                 
                 if toks[2].startswith("$"):
                     i.setSecondSlot(reg=toks[2])
@@ -130,6 +135,7 @@ class MinCompiler:
                 self.instructions.append(i)
                 ip += i.getSize()
 
+
             if op == "mov":
                 i = Instruction(ip,itype=Instruction.TYPE_INS,symbol=ops.ops[ops.OP_MOV])
                 i.setFirstSlot(reg=toks[1])
@@ -153,8 +159,8 @@ class MinCompiler:
                 self.instructions.append(i)
                 ip += i.getSize()
 
-            if op == "jmp":
-                i = Instruction(ip,itype=Instruction.TYPE_INS,symbol=ops.ops[ops.OP_JMP])
+            if op in ["jmp","jne","je","jle","jbe"]:
+                i = Instruction(ip,itype=Instruction.TYPE_INS,symbol=op.upper())
                 i.setFirstSlot(reference=toks[1])
                 i.setSecondSlot(reg="$F")
                 self.instructions.append(i)
