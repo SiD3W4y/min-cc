@@ -37,7 +37,7 @@ class Instruction:
             self.itype = self.TYPE_INT
         
         if string != None:
-            self.first_value = bytes(string,"UTF-8").decode("unicode_escape")
+            self.first_value = bytes(string,"UTF-8").decode("unicode_escape").encode("UTF-8")
             self.itype = self.TYPE_STR
 
         if raw_bytes != None:
