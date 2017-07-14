@@ -20,6 +20,8 @@ OP_AND = 0x12
 OP_OR = 0x13
 OP_SHR = 0x14
 OP_SHL = 0x15
+OP_CALL = 0x16
+OP_RET = 0x17
 
-ops = ["ADD","SUB","MUL","MOV","LDR","LDRB","STR","STRB","PUSH","POP","CMP","JMP","JNE","JE","JLE","JBE","SYS","XOR","AND","OR","SHR","SHL"]
+ops = ["ADD","SUB","MUL","MOV","LDR","LDRB","STR","STRB","PUSH","POP","CMP","JMP","JNE","JE","JLE","JBE","SYS","XOR","AND","OR","SHR","SHL","CALL","RET"]
 

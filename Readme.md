@@ -62,12 +62,12 @@ Based on prefixes, $<register>, 0x<hexnum>, #<name> (data address)
     * [x] **sub** {r} {r,n} 
     * [x] **mul** {r} {r,n}
     * [x] **mov** {r} {r,n,a}
-    * [x] **ldr** {r} {a}
-    * [ ] **ldrb** {r} {a}
-    * [ ] **str** {r} {a}
-    * [ ] **strb** {r} {a}
-    * [ ] **push** {r} 
-    * [ ] **pop** {r}
+    * [x] **ldr** {r} {r,a}
+    * [x] **ldrb** {r} {r,a}
+    * [x] **str** {r} {r,a}
+    * [x] **strb** {r} {r,a}
+    * [x] **push** {r}
+    * [x] **pop** {r}
     * [x] **cmp** {r} {r,n}
     * [x] **jmp** {a}
     * [x] **jne** {a}
@@ -80,6 +80,8 @@ Based on prefixes, $<register>, 0x<hexnum>, #<name> (data address)
     * [x] **or** {r} {r,n}
     * [x] **shr** {r} {r,n}
     * [x] **shl** {r} {r,n}
+    * [x] **call** {r,a}
+    * [x] **ret** 
 
 # Syscalls
 

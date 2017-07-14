@@ -119,16 +119,48 @@ class MinCompiler:
 
                 self.instructions.append(i)
 
-            if op == "ldr": 
-                i = Instruction(ip,itype=Instruction.TYPE_INS,symbol=ops.ops[ops.OP_LDR])
+            if op in ["ldr","ldrb","str","strb"]: 
+                i = Instruction(ip,itype=Instruction.TYPE_INS,symbol=op.upper())
                 i.setFirstSlot(reg=toks[1])
-                i.setSecondSlot(reference=toks[2])
+                if toks[2].startswith("$"):
+                    i.setSecondSlot(reg=toks[2])
+                else:
+                    i.setSecondSlot(reference=toks[2])
+
+                self.instructions.append(i)
+                ip += i.getSize()
+
+            if op in ["push","pop"]:
+                i = Instruction(ip,itype=Instruction.TYPE_INS,symbol=op.upper())
+                i.setFirstSlot(reg=toks[1])
+                i.setSecondSlot(reg="$A") # Will not be used
 
                 self.instructions.append(i)
                 ip += i.getSize()
 
             if op == "sys":
                 i = Instruction(ip,itype=Instruction.TYPE_INS,symbol=ops.ops[ops.OP_SYS])
+                i.setFirstSlot(reg="$A")
+                i.setSecondSlot(reg="$A")
+
+                self.instructions.append(i)
+                ip += i.getSize()
+
+            if op == "call":
+                i = Instruction(ip,itype=Instruction.TYPE_INS,symbol=ops.ops[ops.OP_CALL])
+                
+                if toks[1].startswith("$"):
+                    i.setFirstSlot(reg=toks[1])
+                else:
+                    i.setFirstSlot(reference=toks[1])
+
+                i.setSecondSlot(reg="$A")
+
+                self.instructions.append(i)
+                ip += i.getSize()
+
+            if op == "ret":
+                i = Instruction(ip,itype=Instruction.TYPE_INS,symbol=ops.ops[ops.OP_RET])
                 i.setFirstSlot(reg="$A")
                 i.setSecondSlot(reg="$A")
 
