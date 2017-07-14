@@ -1,0 +1,13 @@
+num exit_code 0
+
+fn main
+	mov $A 0x2
+	xor $B $B
+	str $A #exit_code
+	push $A
+	pop $B
+	ldr $C #exit_code
+	add $B $C 		; $B should be 0x4
+	mov $A 0x02
+	sys
+

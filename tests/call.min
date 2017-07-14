@@ -1,0 +1,27 @@
+string one "Inside called function\n"
+string two "After called function\n"
+
+
+fn exit
+	mov $A 0x02
+	xor $B $B
+	sys
+
+fn call_me
+	xor $A $A
+	xor $B $B
+	mov $C #one
+	mov $D #23
+	sys
+	ret
+
+fn main
+	call call_me
+	xor $A $A
+	xor $B $B
+	mov $C #two
+	mov $D #23
+	sys
+	jmp exit
+	
+
