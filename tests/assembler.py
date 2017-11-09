@@ -26,6 +26,15 @@ class AssemblyTest(unittest.TestCase):
 
         return self.assertEqual(a2,asm.assembleInst("call $B"))
 
+    def test_assemble_double_args(self):
+        asm = Assembler()
+        
+        target = MinInstruction(ops.OP_MOV,OpArg(ArgType.ARG_REG,1),OpArg(ArgType.ARG_VAL,0xff))
+        generated = asm.assembleInst("mov $B 0xff")
+
+        return self.assertEqual(target,generated)
+
+
 
 if __name__ == '__main__':
     unittest.main()
