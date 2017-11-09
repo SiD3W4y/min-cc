@@ -1,11 +1,12 @@
 
 # Object replacing the bloated min.data.Instruction
 
-ARG_VAL = 0
-ARG_REG = 1
-ARG_REF = 2
+class ArgType:
+    ARG_VAL = 0
+    ARG_REG = 1
+    ARG_REF = 2
 
-class OpRef(OpArg):
+class OpArg:
     def __init__(self,argtype,val):
         self.value = val
         self.argtype = argtype
@@ -21,10 +22,11 @@ class OpRef(OpArg):
 
 class MinInstruction:
 
-    def __init__(self,op,arg1,arg2,pos):
+    def __init__(self,op,arg1,arg2,position=0):
+        self.op = op
         self.first_arg = arg1
         self.second_arg = arg2
-        self.position = pos
+        self.position = position
 
     def getFirst(self):
         return self.first_arg
@@ -43,3 +45,20 @@ class MinInstruction:
 
     def getPosition(self):
         return self.position
+
+    def getOpcode(self):
+        return self.op
+
+    def setOpcode(self,val):
+        self.op = val
+
+    def __eq__(self,other):
+        if isinstance(self,type(other)):
+            op_eq = self.op == other.getOpcode()
+            arg1_type_eq = self.first_arg.getType() == other.getFirst().getType()
+            arg2_type_eq = self.second_arg.getType() == other.getSecond().getType()
+            arg1_val_eq = self.first_arg.getValue() == other.getFirst().getValue()
+            arg2_val_eq = self.first_arg.getValue() == other.getFirst().getValue()
+
+            return (op_eq and arg1_type_eq and arg2_type_eq and arg1_val_eq and arg2_val_eq)
+        return False
