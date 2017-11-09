@@ -21,9 +21,10 @@ class OpRef(OpArg):
 
 class MinInstruction:
 
-    def __init__(self,op,arg1,arg2):
+    def __init__(self,op,arg1,arg2,pos):
         self.first_arg = arg1
         self.second_arg = arg2
+        self.position = pos
 
     def getFirst(self):
         return self.first_arg
@@ -36,3 +37,9 @@ class MinInstruction:
 
     def setSecond(self,arg):
         self.second_arg = arg
+
+    def setPosition(self,val):
+        self.position = val
+
+    def getPosition(self):
+        return self.position
