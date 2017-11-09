@@ -19,6 +19,9 @@ class OpArg:
 
     def setValue(self,val):
         self.value = val
+    
+    def __str__(self):
+        return "[ArgType : {} -> Value : {}]".format(self.argtype,self.value)
 
 class MinInstruction:
 
@@ -62,3 +65,6 @@ class MinInstruction:
 
             return (op_eq and arg1_type_eq and arg2_type_eq and arg1_val_eq and arg2_val_eq)
         return False
+
+    def __str__(self):
+        return "{} : {} {}".format(self.op,self.first_arg,self.second_arg)

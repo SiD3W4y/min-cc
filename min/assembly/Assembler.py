@@ -53,6 +53,8 @@ class Assembler:
                 return None
             return OpArg(ArgType.ARG_REG,regs.REGS.index(data[1:]))
 
+        return None
+
 
     def buildNone(self,op):
         """ We build an instruction of the form [op reg reg] because it is smaller """
@@ -67,6 +69,24 @@ class Assembler:
             return None
 
         return MinInstruction(ops.ops.index(op.upper()),arg_obj,OpArg(ArgType.ARG_REG,0))
+
+    def buildDouble(self,op,arg1,arg2,flags1,flags2):
+        """ So many arguments :( """
+
+        arg1_obj = self.parseArg(arg1)
+        arg2_obj = self.parseArg(arg2)
+
+        if arg1_obj.getType() not in flags1:
+            print("Error : First argument has a wrong type \"{}\" for opcode {}".format(arg1,op))
+            return None
+        
+        if arg2_obj.getType() not in flags2:
+            print("Error : Second argument has a wrong type \"{}\" for opcode {}".format(arg2,op))
+            return None
+
+        return MinInstruction(ops.ops.index(op.upper()),arg1_obj,arg2_obj)
+
+
 
     def assembleInst(self,data):
         """ Central function creating Instruction object from input assembly """
@@ -89,5 +109,14 @@ class Assembler:
                 return None
 
             return self.buildSingle(toks[0],toks[1],self.single_arg[toks[0]])
+
+        if tok_number == 3:
+            if toks[0] not in self.double_arg:
+                print("Error : Opcode {} does not exist or has wrong number of arguments".format(toks[0]))
+                return None
+            
+            flags1,flags2 = self.double_arg[toks[0]]
+            
+            return self.buildDouble(toks[0],toks[1],toks[2],flags1,flags2)
         
         return None
