@@ -3,8 +3,6 @@ import unittest
 from min.assembly.MinInstruction import *
 from min.assembly.Assembler import *
 
-import min.data.ops
-
 
 class AssemblyTest(unittest.TestCase):
 
@@ -34,7 +32,14 @@ class AssemblyTest(unittest.TestCase):
 
         return self.assertEqual(target,generated)
 
+    
+    def test_assemble_binary_noarg(self):
+        asm = Assembler()
+        
+        generated = asm.assembleInst("ret")
+        target = b"\x17\x03\x00\x00\x00\x00" # ret when compiled has the form "ret $A $A"
 
+        return self.assertEqual(generated.serialize(),target)
 
 if __name__ == '__main__':
     unittest.main()

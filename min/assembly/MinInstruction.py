@@ -1,3 +1,7 @@
+import struct
+
+import min.data.ops as ops
+from min.data.Serializable import Serializable
 
 # Object replacing the bloated min.data.Instruction
 
@@ -6,8 +10,9 @@ class ArgType:
     ARG_REG = 1
     ARG_REF = 2
 
-class OpArg:
+class OpArg(Serializable):
     def __init__(self,argtype,val):
+        super().__init__()
         self.value = val
         self.argtype = argtype
     
@@ -23,9 +28,18 @@ class OpArg:
     def __str__(self):
         return "[ArgType : {} -> Value : {}]".format(self.argtype,self.value)
 
-class MinInstruction:
+    def serialize(self):
+        if self.argtype == ArgType.ARG_REG:
+            return struct.pack("H",self.value)
+        if self.argtype == ArgType.ARG_VAL:
+            return struct.pack("I",self.value)
+        if self.argtype == ArgType.ARG_REF:
+            print("Error : Reference to \"{}\" must be resolved before assembling".format(self.value))
+        return None
 
+class MinInstruction(Serializable):
     def __init__(self,op,arg1,arg2,position=0):
+        super().__init__()
         self.op = op
         self.first_arg = arg1
         self.second_arg = arg2
@@ -55,6 +69,21 @@ class MinInstruction:
     def setOpcode(self,val):
         self.op = val
 
+    def getSize(self):
+        arg1_type = self.first_arg.getType()
+        arg2_type = self.second_arg.getType()
+        size = 2 # Opcodde + info byte
+
+        if arg1_type in [ArgType.ARG_REF,ArgType.ARG_VAL]:
+            size += 4
+        else:
+            size += 2
+
+        if arg2_type in [ArgType.ARG_REF,ArgType.ARG_VAL]:
+            size += 4
+        else:
+            size += 2
+
     def __eq__(self,other):
         if isinstance(self,type(other)):
             op_eq = self.op == other.getOpcode()
@@ -68,3 +97,21 @@ class MinInstruction:
 
     def __str__(self):
         return "{} : {} {}".format(self.op,self.first_arg,self.second_arg)
+
+    def serialize(self):
+        arg1_type = self.first_arg.getType()
+        arg2_type = self.second_arg.getType()
+
+        if arg1_type == ArgType.ARG_REF or arg2_type == ArgType.ARG_REF:
+            print("Error : References must be fixed before compilation")
+            return None
+
+        result = b""
+        info_byte = int(arg2_type << 1 | arg1_type)
+
+        result += struct.pack("B",self.op)
+        result += struct.pack("B",info_byte)
+        result += self.first_arg.serialize()
+        result += self.second_arg.serialize()
+
+        return result
