@@ -14,6 +14,14 @@ def cleanCode(data):
 
     return new_data
 
+def cleanComment(line):
+    index = line.find(";")
+
+    if index > 0:
+        return line[:index]
+    
+    return line
+
 def hexFromInt(value):
     """This is a hack to pass integers to opcode builder"""
     return '0x{0:04x}'.format(value)
