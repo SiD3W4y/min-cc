@@ -2,6 +2,7 @@ import unittest
 
 from min.assembly.MinInstruction import *
 from min.assembly.Assembler import *
+from min.assembly.Compiler import *
 
 
 class AssemblyTest(unittest.TestCase):
@@ -41,5 +42,12 @@ class AssemblyTest(unittest.TestCase):
 
         return self.assertEqual(generated.serialize(),target)
 
+class CompilerTest(unittest.TestCase):
+
+    def test_compiler_parse_str(self):
+        target = "Hi    bruh"
+        example = 'str "Hi\tbruh"'
+
+        return self.assertEqual(Compiler.processString(example,target))
 if __name__ == '__main__':
     unittest.main()
