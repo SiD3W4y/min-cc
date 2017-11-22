@@ -59,10 +59,25 @@ class Compiler:
         result = bytes(line[begin:end-1],"utf-8").decode("unicode_escape")
         return result
 
+    def processNum(self,num):
+        if num.startswith("0x"):
+            return int(num,16)
+        return int(num)
 
     def fromString(self,data):
         code = strutils.cleanCode(data)
 
         for line in code:
+            tokens = line.split(" ")
+
             if line.startswith("str"):
-                self.processString(line)
+                self.symbols[tokens[1]] = position
+                string = bytes(self.processString(line),"utf-8")
+                self.parts.append(DataObject(DataType.DATA_STRING,string))
+                self.position += len(string)
+
+            if line.startswith("slot"):
+                self.symbols[toks[1]] = position
+                self.parts.append(DataObjects(DataType.DATA_NUMBER,self.processNum(toks[2])))
+                self.position += 2 # numbers like regs and addrs are u16
+
