@@ -44,20 +44,19 @@ class Compiler:
         self.position = 10 # Magic 'MX' + entrypoint addr + binsize
 
     def processString(self,line):
-        begin = line.find('"')
+        begin = line.find('"')+1
         end = begin
         opened = True # Boolean having the current status for quoted string open/closed status
 
         for i in range(len(line[begin:])):
             if line[i] == '"' and line[i-1] != '\\':
                 opened = not opened
-                end += 1
+            end += 1
 
         if opened == True:
             raise Exception("Error : Quoted string not closed")
 
-        result = bytes(line[begin:end],"utf-8").decode("unicode_escape")
-        
+        result = bytes(line[begin:end-1],"utf-8").decode("unicode_escape")
         return result
 
 
