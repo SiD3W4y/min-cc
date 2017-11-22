@@ -44,10 +44,26 @@ class AssemblyTest(unittest.TestCase):
 
 class CompilerTest(unittest.TestCase):
 
-    def test_compiler_parse_str(self):
-        target = "Hi    bruh"
-        example = 'str "Hi\tbruh"'
+    def test_compiler_parse_str_1(self):
+        cc = Compiler()
+        target = "Hi\tbruh"
+        example = r'"Hi\tbruh"'
 
-        return self.assertEqual(Compiler.processString(example,target))
+        return self.assertEqual(cc.processString(example),target)
+
+    def test_compiler_parse_str_2(self):
+        cc = Compiler()
+        target = "\x22\x23\x24"
+        example = r'"\x22\x23\x24"'
+        
+        return self.assertEqual(cc.processString(example),target)
+
+    def test_compiler_parse_str_3(self):
+        cc = Compiler()
+        target = "Hey quoted boye\""
+        example = r'"Hey quoted boye\""'
+
+        return self.assertEqual(cc.processString(example),target)
+
 if __name__ == '__main__':
     unittest.main()
