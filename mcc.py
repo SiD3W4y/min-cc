@@ -2,7 +2,7 @@
 import argparse
 import logging
 
-from min.compiler.MinCompiler import MinCompiler
+from min.assembly.Compiler import Compiler
 
 if __name__ == "__main__":
     log_format = "[%(levelname)s : %(module)s] %(message)s"
@@ -25,10 +25,6 @@ if __name__ == "__main__":
         args.output_file = "a.mx"
 
     logging.info("Compiling {}".format(args.input_file))
-    
-    mcc = MinCompiler()
-    mcc.fromFile(args.input_file)
 
-    mcc.write(args.output_file)
-
-
+    cc = Compiler()
+    cc.fromFile(args.input_file,args.output_file)
