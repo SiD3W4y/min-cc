@@ -19,10 +19,11 @@ class Assembler:
         self.single_arg = {
                 "push": [FLAG_REG],
                 "pop": [FLAG_REG],
-                "jmp": [FLAG_VAL],
-                "jne": [FLAG_VAL],
-                "je": [FLAG_VAL],
-                "jle": [FLAG_VAL],
+                "jmp": [FLAG_VAL,FLAG_REF],
+                "jne": [FLAG_VAL,FLAG_REF],
+                "je": [FLAG_VAL,FLAG_REF],
+                "jle": [FLAG_VAL,FLAG_REF],
+                "jbe": [FLAG_VAL,FLAG_REF],
                 "call": [FLAG_VAL,FLAG_REG]
                 }
         
@@ -39,7 +40,8 @@ class Assembler:
                 "and": ([FLAG_REG],[FLAG_REG,FLAG_VAL]),
                 "or": ([FLAG_REG],[FLAG_REG,FLAG_VAL]),
                 "shr": ([FLAG_REG],[FLAG_REG,FLAG_VAL]),
-                "shl": ([FLAG_REG],[FLAG_REG,FLAG_VAL])
+                "shl": ([FLAG_REG],[FLAG_REG,FLAG_VAL]),
+                "cmp": ([FLAG_REG],[FLAG_REG,FLAG_VAL])
                 }
     
     def parseArg(self,data):

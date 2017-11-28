@@ -107,10 +107,6 @@ class MinInstruction(Serializable):
         arg1_type = self.first_arg.getType()
         arg2_type = self.second_arg.getType()
 
-        if arg1_type == ArgType.ARG_REF or arg2_type == ArgType.ARG_REF:
-            print("Error : References must be fixed before compilation")
-            return None
-
         result = b""
         info_byte = int(arg2_type << 1 | arg1_type)
 

@@ -5,6 +5,7 @@ from min.data.Serializable import Serializable
 import min.utils.strutils as strutils
 
 import struct
+import logging
 
 class DataType:
     DATA_STRING = 0
@@ -90,27 +91,47 @@ class Compiler:
         return bytes(result)
 
     def fixRef(self,ins):
-        if ins.getFirst().getType() == ArgType.ARG_REF:
-            value = ins.getFirst().getValue()
-            if value in self.symbols:
-                ins.getFirst().setType(ArgType.ARG_VAL)
-                ins.getFirst().setValue(self.symbols[value])
-        if ins.getSecond().getType() == ArgType.ARG_REF:
-            value = ins.getSecond().getValue()
-            if value in self.symbols:
-                ins.getSecond().setType(ArgType.ARG_VAL)
-                ins.getSecond().setValue(self.symbols[value])
-                
+        if isinstance(ins,MinInstruction):
+            ins_copy = ins
 
+            if ins_copy.first_arg.getType() == ArgType.ARG_REF:
+                value = ins_copy.first_arg.getValue()
+                logging.debug("Fixing reference to : {}".format(ins))
+
+                if value in self.symbols:
+                    ins_copy.first_arg.setType(ArgType.ARG_VAL)
+                    ins_copy.first_arg.setValue(self.symbols[value])
+                else:
+                    logging.error("Symbol {} not found".format(self.symbols))
+
+            if ins_copy.second_arg.getType() == ArgType.ARG_REF:
+                value = ins_copy.second_arg.getValue()
+                logging.debug("Fixing reference to : {}".format(ins))
+
+                if value in self.symbols:
+                    ins_copy.second_arg.setType(ArgType.ARG_VAL)
+                    ins_copy.second_arg.setValue(self.symbols[value])
+                else:
+                    logging.error("Symbol {} not found".format(value))
+                    
+            return ins_copy
+        return ins
+
+    def fromFile(self,input_file,output_file):
+        input_data = open(input_file,"r").read()
+        buff = self.fromString(input_data)
+        open(output_file,"wb").write(buff)
 
     def fromString(self,data):
         code = strutils.cleanCode(data)
 
         for line in code:
+            logging.debug("Processing -> {}".format(line))
             tokens = line.split(" ")
 
-            if line.startswith("str"):
-                self.symbols[tokens[0]] = self.position
+            if line.startswith("string"):
+                logging.info("Adding symbol : {}".format(tokens[1]))
+                self.symbols[tokens[1]] = self.position
                 string = bytes(self.processString(line),"utf-8")
                 self.parts.append(DataObject(DataType.DATA_STRING,string))
                 self.position += len(string)
@@ -123,6 +144,7 @@ class Compiler:
 
             elif line.startswith("num"):
                 self.symbols[tokens[1]] = self.position
+                logging.info("Adding symbol : {}".format(tokens[1]))
                 self.parts.append(DataObject(DataType.DATA_NUMBER,self.processNum(tokens[2])))
                 self.position += 4 # Numbers are u32
 
@@ -134,14 +156,29 @@ class Compiler:
             
             elif line.startswith("fn"):
                 self.symbols[tokens[1]] = self.position
+                logging.info("Adding symbol : {}".format(tokens[1]))
 
             else:
                 ins = self.assembler.assembleInst(line)
                 self.parts.append(ins)
-                self.position += ins.getSize() 
+                self.position += ins.getSize()
 
+        if "main" not in self.symbols:
+            raise Exception("No main function defined")
 
-        for i in range(len(self.parts)):
-            part = self.parts[i]
-            if isinstance(part,MinInstruction):
-                  self.fixRef(part)
+        for sym in self.symbols:
+            logging.info("Symbol {} defined at offset {}".format(sym,hex(self.symbols[sym])))
+
+        self.parts = list(map(self.fixRef,self.parts))
+
+        code_section = b""
+
+        for elem in self.parts:
+            code_section += elem.serialize()
+
+        self.output += b"MX"
+        self.output += struct.pack("I",self.symbols["main"])
+        self.output += struct.pack("I",len(code_section)+10)
+        self.output += code_section
+
+        return self.output
