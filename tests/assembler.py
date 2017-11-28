@@ -60,10 +60,41 @@ class CompilerTest(unittest.TestCase):
 
     def test_compiler_parse_str_3(self):
         cc = Compiler()
-        target = "Hey quoted boye\""
-        example = r'"Hey quoted boye\""'
+        target = "Hey quoted \nboye\""
+        example = r'"Hey quoted \nboye\""'
 
         return self.assertEqual(cc.processString(example),target)
+
+    def test_compiler_parse_str_4(self):
+        cc = Compiler()
+        target = "Hey"
+        example = r'str hey "Hey"'
+
+        return self.assertEqual(cc.processString(example),target)
+
+    def test_compiler_parse_bytes_1(self):
+        cc = Compiler()
+        target = b"\x22\x23\x24\x25"
+        example = "[0x22,0x23,0x24,0x25]"
+
+        return self.assertEqual(cc.processBytes(example),target)
+
+    def test_compiler_simple_prog_1(self):
+        cc = Compiler()
+
+        source = """
+            str hey "hey"
+            bytes buffer = [0x22 , 0x33, 0x54]
+
+            fn main
+                mov $A 0x22
+                mov $B 0x23
+                ret
+        """
+
+        cc.fromString(source)
+
+        return True
 
 if __name__ == '__main__':
     unittest.main()
