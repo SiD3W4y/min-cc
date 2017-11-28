@@ -79,22 +79,5 @@ class CompilerTest(unittest.TestCase):
 
         return self.assertEqual(cc.processBytes(example),target)
 
-    def test_compiler_simple_prog_1(self):
-        cc = Compiler()
-
-        source = """
-            str hey "hey"
-            bytes buffer = [0x22 , 0x33, 0x54]
-
-            fn main
-                mov $A 0x22
-                mov $B 0x23
-                ret
-        """
-
-        cc.fromString(source)
-
-        return True
-
 if __name__ == '__main__':
     unittest.main()
