@@ -25,6 +25,9 @@ class OpArg(Serializable):
     def setValue(self,val):
         self.value = val
     
+    def setType(self,new_type):
+        self.argtype = new_type
+
     def __str__(self):
         return "[ArgType : {} -> Value : {}]".format(self.argtype,self.value)
 
@@ -34,7 +37,7 @@ class OpArg(Serializable):
         if self.argtype == ArgType.ARG_VAL:
             return struct.pack("I",self.value)
         if self.argtype == ArgType.ARG_REF:
-            print("Error : Reference to \"{}\" must be resolved before assembling".format(self.value))
+            raise Exception("Error : Reference to \"{}\" must be resolved before assembling".format(self.value))
         return None
 
 class MinInstruction(Serializable):
@@ -83,6 +86,8 @@ class MinInstruction(Serializable):
             size += 4
         else:
             size += 2
+
+        return size
 
     def __eq__(self,other):
         if isinstance(self,type(other)):
