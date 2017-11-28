@@ -92,7 +92,7 @@ class Assembler:
         """ Central function creating Instruction object from input assembly """
         toks = data.strip().split(" ")
         tok_number = len(toks)
-        
+
         if tok_number == 0:
             print("Error : Not opcode given")
             return None
