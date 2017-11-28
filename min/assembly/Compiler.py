@@ -89,6 +89,20 @@ class Compiler:
 
         return bytes(result)
 
+    def fixRef(self,ins):
+        if ins.getFirst().getType() == ArgType.ARG_REF:
+            value = ins.getFirst().getValue()
+            if value in self.symbols:
+                ins.getFirst().setType(ArgType.ARG_VAL)
+                ins.getFirst().setValue(self.symbols[value])
+        if ins.getSecond().getType() == ArgType.ARG_REF:
+            value = ins.getSecond().getValue()
+            if value in self.symbols:
+                ins.getSecond().setType(ArgType.ARG_VAL)
+                ins.getSecond().setValue(self.symbols[value])
+                
+
+
     def fromString(self,data):
         code = strutils.cleanCode(data)
 
@@ -96,7 +110,7 @@ class Compiler:
             tokens = line.split(" ")
 
             if line.startswith("str"):
-                self.symbols[tokens[1]] = self.position
+                self.symbols[tokens[0]] = self.position
                 string = bytes(self.processString(line),"utf-8")
                 self.parts.append(DataObject(DataType.DATA_STRING,string))
                 self.position += len(string)
@@ -127,4 +141,7 @@ class Compiler:
                 self.position += ins.getSize() 
 
 
-
+        for i in range(len(self.parts)):
+            part = self.parts[i]
+            if isinstance(part,MinInstruction):
+                  self.fixRef(part)
