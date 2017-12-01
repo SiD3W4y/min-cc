@@ -130,7 +130,7 @@ class Compiler:
             tokens = line.split(" ")
 
             if line.startswith("string"):
-                logging.info("Adding symbol : {}".format(tokens[1]))
+                logging.debug("Adding symbol : {}".format(tokens[1]))
                 self.symbols[tokens[1]] = self.position
                 string = bytes(self.processString(line),"utf-8")
                 self.parts.append(DataObject(DataType.DATA_STRING,string))
@@ -144,7 +144,7 @@ class Compiler:
 
             elif line.startswith("num"):
                 self.symbols[tokens[1]] = self.position
-                logging.info("Adding symbol : {}".format(tokens[1]))
+                logging.debug("Adding symbol : {}".format(tokens[1]))
                 self.parts.append(DataObject(DataType.DATA_NUMBER,self.processNum(tokens[2])))
                 self.position += 4 # Numbers are u32
 
@@ -156,7 +156,7 @@ class Compiler:
             
             elif line.startswith("fn"):
                 self.symbols[tokens[1]] = self.position
-                logging.info("Adding symbol : {}".format(tokens[1]))
+                logging.debug("Adding symbol : {}".format(tokens[1]))
 
             else:
                 ins = self.assembler.assembleInst(line)
@@ -167,7 +167,7 @@ class Compiler:
             raise Exception("No main function defined")
 
         for sym in self.symbols:
-            logging.info("Symbol {} defined at offset {}".format(sym,hex(self.symbols[sym])))
+            logging.debug("Symbol {} defined at offset {}".format(sym,hex(self.symbols[sym])))
 
         self.parts = list(map(self.fixRef,self.parts))
 
