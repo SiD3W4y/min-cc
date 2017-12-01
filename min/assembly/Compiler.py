@@ -33,7 +33,7 @@ class DataObject(Serializable):
 
     def serialize(self):
         if self.data_type == DataType.DATA_STRING:
-            return bytes(self.value)
+            return bytes(self.value)+b"\x00"
         if self.data_type == DataType.DATA_SLOT:
             return bytes(self.value)
         if self.data_type == DataType.DATA_NUMBER:
@@ -134,7 +134,7 @@ class Compiler:
                 self.symbols[tokens[1]] = self.position
                 string = bytes(self.processString(line),"utf-8")
                 self.parts.append(DataObject(DataType.DATA_STRING,string))
-                self.position += len(string)
+                self.position += len(string)+1 # Null byte
 
             elif line.startswith("slot"):
                 self.symbols[tokens[1]] = self.position
