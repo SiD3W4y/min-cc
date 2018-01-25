@@ -7,7 +7,7 @@ fn main
 	push $A
 	pop $B
 	ldr $C #exit_code
-	add $B $C 		; $B should be 0x4
+	add $B $C
 	mov $A 0x02
 	sys
 
