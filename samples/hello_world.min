@@ -12,5 +12,6 @@ fn main
 	mov $C #hello_world	
 	ldr $D #size		
 	sys			
-	jmp exit
+	jmp #exit
+
 string useless_string "Hey it's me, useless !"
