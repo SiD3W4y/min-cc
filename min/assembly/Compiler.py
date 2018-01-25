@@ -139,7 +139,7 @@ class Compiler:
             elif line.startswith("slot"):
                 self.symbols[tokens[1]] = self.position
                 slot_size = self.processNum(tokens[2])
-                self.parts.append(DataObjects(DataType.DATA_SLOT,slot_size))
+                self.parts.append(DataObject(DataType.DATA_SLOT,slot_size))
                 self.position += slot_size
 
             elif line.startswith("num"):
