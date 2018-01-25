@@ -23,8 +23,11 @@ if __name__ == "__main__":
 
     if args.output_file == None:
         args.output_file = "a.mx"
+    
+    if args.input_file != None:
+        logging.info("Compiling {}".format(args.input_file))
 
-    logging.info("Compiling {}".format(args.input_file))
-
-    cc = Compiler()
-    cc.fromFile(args.input_file,args.output_file)
+        cc = Compiler()
+        cc.fromFile(args.input_file,args.output_file)
+    else:
+        logging.error("No input file specified")
